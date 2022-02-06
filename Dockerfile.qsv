@@ -1,0 +1,22 @@
+FROM akashisn/ffmpeg:4.4.1-qsv
+
+WORKDIR /usr/src/app/tesla_dashcam
+
+RUN apt-get update -y \
+    && apt-get install -y \
+        python3.8 \
+        python3.8-dev \
+        python3-pip \
+        fonts-freefont-ttf \
+        libnotify-bin \
+    && apt-get remove --purge --auto-remove -y && rm -rf /var/lib/apt/lists/*
+
+COPY . /usr/src/app/tesla_dashcam
+RUN python3 -m pip install -r requirements.txt
+
+# Enable Logs to show on run
+ENV PYTHONUNBUFFERED=true
+# Provide a default timezone
+ENV TZ=America/New_York
+
+ENTRYPOINT [ "python3", "tesla_dashcam/tesla_dashcam.py" ]
